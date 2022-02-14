@@ -7,13 +7,13 @@
 [![NPM downloads total][npm-downloads-total-image]][npm-url]
 [![MIT License][license-image]][license-url]
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Facebook][facebook-image]][facebook-url]
+[![Youtube][youtube-image]][youtube-url]
 [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=flat-square)](https://www.paypal.me/techtoday) 
 
 
 ![Sample Node](img/readmemain.png)
 
-Control your KNX intallation via Node-Red! Single Node KNX IN/OUT with optional ETS group address importer and gateway simulation. Easy to use and highly configurable.
+Control your KNX intallation via Node-Red! 
 
 **You can use it immediately!**
 ```javascript
@@ -29,7 +29,8 @@ payload = {red:255, green:200, blue:30} // Put some colors in our life
 * **LOGGER node** [here](https://github.com/Supergiovane/node-red-contrib-knx-ultimate/wiki/Logger-Configuration), creates an XML diagnostic file, compatible with ETS. You can open it with ETS for diagnostic pourposes. Node: the Logger currently doesn't record the telegrams coming from KNX-Ultimate if you use a **KNX/IP Interface**. 
 * **GLOBAL CONTEXT node** [here](https://github.com/Supergiovane/node-red-contrib-knx-ultimate/wiki/GlobalVariable), exposes the group addresses to a Global Context variable, to be used in function nodes.
 * **ALERTER node** [here](https://github.com/Supergiovane/node-red-contrib-knx-ultimate/wiki/Alerter-Configuration). With the Alerter node you can signal to a display or to the node-red-contrib-tts-ultimate node (audio feedback), whenever the selected devices are alerted, i.e. they have payload **true**.
-
+* **LOAD CONTROL node** [here](https://github.com/Supergiovane/node-red-contrib-knx-ultimate/wiki/LoadControl-Configuration). Control your loads (Oven, Washing machine, etc..) and avoit shutting down the main voltage due to too high power consumption.
+* **VIEWER node** [here](https://github.com/Supergiovane/node-red-contrib-knx-ultimate/wiki/knxUltimateViewer). View all Group Addresses and values of your KNX BUS, in the Node-Red Dashboard.
 
 ## CHANGELOG
 
@@ -67,8 +68,7 @@ Click your language to go to the documentation.<br/>
 ## STARTER PACK
 
 * [Wiki and Help](https://github.com/Supergiovane/node-red-contrib-knx-ultimate/wiki)
-* [Youtube video](https://www.youtube.com/playlist?list=PL9Yh1bjbLAYpfy1Auz6CKDfXUusgMwOQr)
-* [Facebook page](https://www.facebook.com/supergiovaneDev)
+* [Youtube channel](https://www.youtube.com/playlist?list=PL9Yh1bjbLAYpfy1Auz6CKDfXUusgMwOQr)
 * [FAQ + Troubleshoot](https://github.com/Supergiovane/node-red-contrib-knx-ultimate/wiki/5.-FAQ-Troubleshoot)
 * [Security best practices](https://github.com/Supergiovane/node-red-contrib-knx-ultimate/wiki/SECURITY)
 
@@ -297,11 +297,11 @@ List of commercial companies, which have given us permission to be mentioned on 
 ## FRIENDLY COMMUNITIES AROUND THE WORLD
 
 **Italy**
-* [VivereSmart](https://www.facebook.com/groups/viveresmart)
+* [![](https://raw.githubusercontent.com/Supergiovane/node-red-contrib-knx-ultimate/master/img/c/viveresmart.png)](https://www.facebook.com/groups/viveresmart)
 * [VivereSmart TV](https://www.youtube.com/channel/UC6GlFhcbNuoSEejZ_HlCynA)
 
 **Germany**
-* [knx-user-forum](https://knx-user-forum.de/forum/öffentlicher-bereich/knx-eib-forum/1389088-knx-node-for-node-red)
+* [![](https://raw.githubusercontent.com/Supergiovane/node-red-contrib-knx-ultimate/master/img/c/knxuserforum.png)](https://knx-user-forum.de/forum/öffentlicher-bereich/knx-eib-forum/1389088-knx-node-for-node-red) 
 
 **China**
 * [QQ group: 837579219 （加群需要备注 “来自github”](tencent://groupwpa/?subcmd=all&param=7b2267726f757055696e223a3833373537393231392c2274696d655374616d70223a313633303934363639312c22617574684b6579223a22762b72482b466f4a496a75613033794e4a30744a6970756c55753639424f4d55724f464c4a6c474b77346a30326b7a4f7a3338535536517844684d7756414d62222c2261757468223a22227d&jump_from=)
@@ -319,5 +319,5 @@ List of commercial companies, which have given us permission to be mentioned on 
 [npm-version-image]: https://img.shields.io/npm/v/node-red-contrib-knx-ultimate.svg
 [npm-downloads-month-image]: https://img.shields.io/npm/dm/node-red-contrib-knx-ultimate.svg
 [npm-downloads-total-image]: https://img.shields.io/npm/dt/node-red-contrib-knx-ultimate.svg
-[facebook-image]: https://img.shields.io/badge/Visit%20me-Facebook-blue
-[facebook-url]: https://www.facebook.com/supergiovaneDev
+[youtube-image]: https://img.shields.io/badge/Visit%20me-Youtube-red
+[youtube-url]: https://www.youtube.com/channel/UCA9RsLps1IthT7fDSeUbRZw/playlists

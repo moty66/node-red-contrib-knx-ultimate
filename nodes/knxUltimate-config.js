@@ -357,6 +357,10 @@ return msg;`, "helplink": "https://github.com/Supergiovane/node-red-contrib-knx-
                                 // Is a Scene Controller
                                 sGA = "\"Alerter\"";
                                 sDPT = "\"Any\"";
+                            } else if (input.hasOwnProperty("isLoadControlNode")) {
+                                // Is a Load Controller
+                                sGA = "\"LoadControl\"";
+                                sDPT = "\"Any\"";
                             } else {
                                 // Is a ListenallGA
                                 sGA = "\"Universal Node\"";
@@ -546,6 +550,8 @@ return msg;`, "helplink": "https://github.com/Supergiovane/node-red-contrib-knx-
 
                         // 04/04/2020 selected READ FROM BUS 1
                         if (oClient.hasOwnProperty("isalertnode") && oClient.isalertnode) {
+                            oClient.initialReadAllDevicesInRules();
+                        } else if (oClient.hasOwnProperty("isLoadControlNode") && oClient.isLoadControlNode) {
                             oClient.initialReadAllDevicesInRules();
                         } else if (oClient.listenallga == true) {
                             for (let index = 0; index < node.csv.length; index++) {
@@ -814,8 +820,7 @@ return msg;`, "helplink": "https://github.com/Supergiovane/node-red-contrib-knx-
 
         // Handle BUS events
         // ---------------------------------------------------------------------------------------
-        //function handleBusEvents(_evt, _src, _dest, _rawValue, _datagram, _isRepeated) {
-        function handleBusEvents(_datagram, _echoed, _CEMI) {
+        function handleBusEvents(_datagram, _echoed) {
 
 
             // _rawValue
@@ -847,20 +852,20 @@ return msg;`, "helplink": "https://github.com/Supergiovane/node-red-contrib-knx-
             // 23/03/2021 Supergiovane: Added the CEMI telegram for ETS Diagnostic
             // #####################################################################
             let _cemiETS = "";
-            if (_CEMI !== undefined && _CEMI !== null) {
-                // I'm receiving a telegram from the BUS
-                try {
-                    var iStart = _datagram._header._headerLength; //+ 4;
-                    _cemiETS = _CEMI.substring(iStart * 2);
-                    //_cemiETS = datagram.cEMIMessage.srcAddress.toBuffer().toString("hex") + _datagram.cEMIMessage.dstAddress.toBuffer().toString("hex") + "01" + _datagram.cEMIMessage.npdu._tpci.toString(16)
-                } catch (error) { }
-
-            } else if (_echoed) {
-                // I'm sending a telegram to the BUS
+            if (_echoed) {
+                // I'm sending a telegram to the BUS in Tunneling mode, with echo enabled.
+                // Tunnel: TX to BUS: OK
                 try {
                     let sCemiFromDatagram = _datagram.cEMIMessage.toBuffer().toString("hex");
-                    let iStartAddress = sCemiFromDatagram.indexOf(_datagram.cEMIMessage.srcAddress.toBuffer().toString("hex"));
                     _cemiETS = "2900BCD0" + sCemiFromDatagram.substr(8);
+                } catch (error) { _cemiETS = ""; }
+            } else {
+                try {
+                    // Multicast: RX from BUS: OK
+                    // Multicast TX to BUS: OK
+                    // Tunnel: RX from BUS: OK
+                    // Tunnel: TX to BUS: see the _echoed above
+                    _cemiETS = _datagram.cEMIMessage.toBuffer().toString("hex")
                 } catch (error) { _cemiETS = ""; }
             }
             // #####################################################################
@@ -943,6 +948,7 @@ return msg;`, "helplink": "https://github.com/Supergiovane/node-red-contrib-knx-
                                 try {
                                     oGA = node.csv.filter(sga => sga.ga == _dest)[0];
                                 } catch (error) { }
+
                                 // 25/10/2019 TRY TO AUTO DECODE IF Group address not found in the CSV
                                 let msg = buildInputMessage({ _srcGA: _src, _destGA: _dest, _event: _evt, _Rawvalue: _rawValue, _inputDpt: (typeof oGA === "undefined") ? null : oGA.dpt, _devicename: (typeof oGA === "undefined") ? input.name || "" : oGA.devicename, _outputtopic: _dest, _oNode: input });
                                 input.setNodeStatus({ fill: "green", shape: "dot", text: (typeof oGA === "undefined") ? "Try to decode" : "", payload: msg.payload, GA: msg.knx.destination, dpt: msg.knx.dpt, devicename: msg.devicename });
@@ -993,7 +999,6 @@ return msg;`, "helplink": "https://github.com/Supergiovane/node-red-contrib-knx-
                                     oGA = node.csv.filter(sga => sga.ga == _dest)[0];
                                 } catch (error) { }
 
-                                // 25/10/2019 TRY TO AUTO DECODE IF Group address not found in the CSV
                                 let msg = buildInputMessage({ _srcGA: _src, _destGA: _dest, _event: _evt, _Rawvalue: _rawValue, _inputDpt: (typeof oGA === "undefined") ? null : oGA.dpt, _devicename: (typeof oGA === "undefined") ? input.name || "" : oGA.devicename, _outputtopic: _dest, _oNode: input });
                                 input.setNodeStatus({ fill: "blue", shape: "dot", text: (typeof oGA === "undefined") ? "Try to decode" : "", payload: msg.payload, GA: msg.knx.destination, dpt: msg.knx.dpt, devicename: msg.devicename });
                                 input.handleSend(msg)
@@ -1108,16 +1113,17 @@ return msg;`, "helplink": "https://github.com/Supergiovane/node-red-contrib-knx-
                     node.lockHandleTelegramQueue = false; // Unlock the function
                     return;
                 }
-            
-                // 26/12/2021 If the KNXEngine is busy waiting for telegram's ACK, exit
-                if (!node.knxConnection._getClearToSend()) {
-                    node.lockHandleTelegramQueue = false; // Unlock the function
-                    if (node.telegramsQueue.length > 0) {
-                        if (node.sysLogger !== undefined && node.sysLogger !== null) node.sysLogger.warn("knxUltimate-config: handleTelegramQueue: the KNXEngine is busy or is waiting for a telegram ACK with seqNumner " + node.knxConnection._getSeqNumber() + ". Delay handling queue.");
-                    }
-                    return;
-                }
 
+                // 26/12/2021 If the KNXEngine is busy waiting for telegram's ACK, exit
+                if (node.host.toUpperCase() !== "EMULATE") {
+                    if (!node.knxConnection._getClearToSend()) {
+                        node.lockHandleTelegramQueue = false; // Unlock the function
+                        if (node.telegramsQueue.length > 0) {
+                            if (node.sysLogger !== undefined && node.sysLogger !== null) node.sysLogger.warn("knxUltimate-config: handleTelegramQueue: the KNXEngine is busy or is waiting for a telegram ACK with seqNumner " + node.knxConnection._getSeqNumber() + ". Delay handling queue.");
+                        }
+                        return;
+                    }
+                }
 
                 // Retrieving oKNXMessage  { grpaddr, payload,dpt,outputtype (write or response),nodecallerid (node caller)}. 06/03/2020 "Read" request does have the lower priority in the queue, so firstly, i search for "read" telegrams and i move it on the top of the queue pile.
                 var aTelegramsFiltered = [];
@@ -1357,7 +1363,7 @@ return msg;`, "helplink": "https://github.com/Supergiovane/node-red-contrib-knx-
 
                 // Formatting the msg output value
                 if (_oNode !== null && jsValue !== null) {
-                    if (typeof jsValue === "number") {
+                    if (typeof jsValue === "number" && _oNode.formatmultiplyvalue !== undefined && _oNode.formatdecimalsvalue !== undefined && _oNode.formatnegativevalue !== undefined) {
                         // multiplier
                         jsValue = jsValue * _oNode.formatmultiplyvalue;
                         // Number of decimals

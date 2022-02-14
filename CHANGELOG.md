@@ -3,6 +3,49 @@
 [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg?style=flat-square)](https://www.paypal.me/techtoday) 
 
 <br/>
+
+# CHANGELOG
+
+<p>
+<b>Version 1.3.30</b> - February 2022<br/>
+- KNX Viewer node: changed the Datetime display to local time format.<br/>
+</p>
+<p>
+<b>Version 1.3.29</b> - February 2022<br/>
+- Load Control: the timer for shedding won't everytime obey to what you've set. Fixed. <br/>
+- Load Control: Added pre-shedding yellow warning message in the node status.<br/>
+</p>
+<p>
+<b>Version 1.3.28</b> - February 2022<br/>
+- NEW: KNX Viewer: this node allow you to see all datapints and values in a dashboard wirget. https://github.com/Supergiovane/node-red-contrib-knx-ultimate/wiki/knxUltimateViewer<br/>
+</p>
+<p>
+<b>Version 1.3.27</b> - February 2022<br/>
+- Load Control: minor fixes + issue a KNX read of Watt values, in case the GA doesn't automatically send a power value on change.<br/>
+</p>
+<p>
+<b>Version 1.3.26</b> - February 2022<br/>
+- FIX: fix a crash occurring it the KNX Gateway is set to "emulate" (that means, don't write to the bus).<br/>
+</p>
+<p>
+<b>Version 1.3.25</b> - February 2022<br/>
+- FIX: Load Control: measure unit was Wh. Corrected in W. Thank @Mauro of VivereSmart Facebook group https://www.facebook.com/groups/viveresmart<br/>
+- Load Control: Added more info to the output message. Updated the online help.<br/>
+</p>
+<p>
+<b>Version 1.3.24</b> - February 2022<br/>
+- NEW: Load Control node: switch off your device if you're exceeding the Watt limit of your house.<br/>
+- FIX: Alerter Node: fixed a KNX Address verification, in case you wrote your own string instead of a GA.<br/>
+- FIX: Alerter Node: the node was sending a "read" request to all group addresses at start. Fixed.<br/>
+</p>
+<p>
+<b>Version 1.3.22</b> - February 2022<br/>
+- FIX: WriteRaw: some values wasn't sent to the bus due to an hex conversion issue.<br/>
+</p>
+<p>
+<b>Version 1.3.21</b> - January 2022<br/>
+- FIX: Node Logger wasn't correclty logging the bus traffic. Fixed.<br/>
+</p>
 <p>
 <b>Version 1.3.20</b> - January 2022<br/>
 - NEW: Telegram out queue TTL: as soon as KNX-Ultimate detects a connection loss, it will retain the telegrams sent to the BUS during the disconnection. After the reconnection, KNX-Ultimate will send the retained queue.<br/>
